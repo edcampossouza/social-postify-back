@@ -7,12 +7,13 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
     try {
       createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
       const user = await this.prismaService.user.create({
         data: createUserDto,
       });
+      delete user.password;
       return user;
     } catch (error) {
       console.log(error);
