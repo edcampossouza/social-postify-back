@@ -28,8 +28,18 @@ export class PublicationService {
     }
   }
 
-  findAll() {
-    return `This action returns all publication`;
+  findAll(userId: number) {
+    return this.prismaService.publication.findMany({
+      where: { userId },
+      select: {
+        image: true,
+        title: true,
+        text: true,
+        dateToPublish: true,
+        published: true,
+        socialMedia: true,
+      },
+    });
   }
 
   findOne(id: number) {
