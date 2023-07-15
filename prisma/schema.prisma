@@ -26,7 +26,8 @@ model Publication {
   user          User     @relation(fields: [userId], references: [id])
   image         String
   title         String
-  dateToPublish Decimal
+  text          String
+  dateToPublish DateTime
   published     Boolean  @default(false)
   socialMedia   String
   createdAt     DateTime @default(now())

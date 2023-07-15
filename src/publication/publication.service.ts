@@ -1,0 +1,46 @@
+import { ConflictException, Injectable } from '@nestjs/common';
+import { CreatePublicationDto } from './dto/create-publication.dto';
+import { UpdatePublicationDto } from './dto/update-publication.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
+
+@Injectable()
+export class PublicationService {
+  constructor(private prismaService: PrismaService) {}
+
+  async create(createPublicationDto: CreatePublicationDto, userId: number) {
+    const date = new Date(createPublicationDto.dateToPublish);
+    try {
+      const publication = await this.prismaService.publication.create({
+        data: { ...createPublicationDto, dateToPublish: date, userId },
+      });
+      return publication;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException(
+          `Title "${createPublicationDto.title}" already exists`,
+        );
+      }
+      throw error;
+    }
+  }
+
+  findAll() {
+    return `This action returns all publication`;
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} publication`;
+  }
+
+  update(id: number, updatePublicationDto: UpdatePublicationDto) {
+    return `This action updates a #${id} publication`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} publication`;
+  }
+}
